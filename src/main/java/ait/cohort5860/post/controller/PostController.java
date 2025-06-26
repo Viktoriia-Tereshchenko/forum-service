@@ -26,14 +26,14 @@ public class PostController {
         return postService.addPost(author, newPostDto);
     }
 
-    @GetMapping("/post/{postId}")
-    public PostDto findPostById(@PathVariable("postId") Long id) {
+    @GetMapping("/post/{id}")
+    public PostDto findPostById(@PathVariable Long id) {
         return postService.findPostById(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/post/{postId}/like")
-    public void addLike(@PathVariable("postId") Long id) {
+    @PatchMapping("/post/{id}/like")
+    public void addLike(@PathVariable Long id) {
         postService.addLike(id);
     }
 
@@ -42,18 +42,18 @@ public class PostController {
         return postService.findPostsByAuthor(author);
     }
 
-    @PatchMapping("/post/{postId}/comment/{commenter}")
-    public PostDto addComment(@PathVariable("postId") Long id, @PathVariable("commenter") String author, @RequestBody NewCommentDto newCommentDto) {
+    @PatchMapping("/post/{id}/comment/{commenter}")
+    public PostDto addComment(@PathVariable Long id, @PathVariable("commenter") String author, @RequestBody NewCommentDto newCommentDto) {
         return postService.addComment(id, author, newCommentDto);
     }
 
-    @DeleteMapping("/post/{postId}")
-    public PostDto deletePost(@PathVariable("postId") Long id) {
+    @DeleteMapping("/post/{id}")
+    public PostDto deletePost(@PathVariable Long id) {
         return postService.deletePost(id);
     }
 
     @GetMapping("/posts/tags")
-    public List<PostDto> findPostsByTags(@RequestParam Set<String> tags) {
+    public List<PostDto> findPostsByTags(@RequestParam("values") Set<String> tags) {
         return postService.findPostsByTags(tags);
     }
 
@@ -62,8 +62,8 @@ public class PostController {
         return postService.findPostsByPeriod(dateFrom, dateTo);
     }
 
-    @PatchMapping("/post/{postId}")
-    public PostDto updatePost(@PathVariable("postId") Long id, @RequestBody NewPostDto newPostDto) {
+    @PatchMapping("/post/{id}")
+    public PostDto updatePost(@PathVariable Long id, @RequestBody NewPostDto newPostDto) {
         return postService.updatePost(id, newPostDto);
     }
 }
