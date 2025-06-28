@@ -15,9 +15,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor // for the final fields
@@ -34,6 +37,10 @@ public class PostServiceImpl implements PostService {
         Post post = new Post(newPostDto.getTitle(), newPostDto.getContent(), author);
         Set<String> tags = newPostDto.getTags();
         // Handle tags
+        return getPostDto(post, tags);
+    }
+
+    private PostDto getPostDto(Post post, Set<String> tags) {
         if (tags != null) {
             for (String tagName : tags) {
                 //orElseGet - save and return the result
@@ -60,9 +67,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PostDto> findPostsByAuthor(String author) {
         return postRepository.findByAuthorIgnoreCase(author)
-                .stream()
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
     }
@@ -72,10 +79,9 @@ public class PostServiceImpl implements PostService {
     public PostDto addComment(Long id, String author, NewCommentDto newCommentDto) {
         Post post = postRepository.findById(id).orElseThrow(NotFoundException::new);
         Comment comment = new Comment(author, newCommentDto.getMessage());
+        post.addComment(comment);
         commentRepository.save(comment);
         comment.setPost(post);
-        post.addComment(comment);
-
         return modelMapper.map(post, PostDto.class);
     }
 
@@ -88,18 +94,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PostDto> findPostsByTags(Set<String> tags) {
         return postRepository.findDistinctByTagsNameInIgnoreCase(tags)
-                .stream()
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
     }
 
     // FIXME (Bad request)
     @Override
-    public List<PostDto> findPostsByPeriod(LocalDateTime dateFrom, LocalDateTime dateTo) {
-        return postRepository.findByDateCreatedBetween(dateFrom, dateTo)
-                .stream()
+    @Transactional(readOnly = true)
+    public List<PostDto> findPostsByPeriod(LocalDate dateFrom, LocalDate dateTo) {
+        LocalDateTime from = dateFrom.atStartOfDay();
+        //LocalDateTime to = dateTo.plusDays(1).atStartOfDay();
+        LocalDateTime to = dateTo.atTime(LocalTime.MAX);
+        return postRepository.findByDateCreatedBetween(from, to)
                 .map(p -> modelMapper.map(p, PostDto.class))
                 .toList();
     }
@@ -118,13 +127,6 @@ public class PostServiceImpl implements PostService {
         if (title != null) {
             post.setTitle(title);
         }
-        if (tags != null) {
-            for (String tagName : tags) {
-                Tag tag = tagRepository.findById(tagName).orElseGet(
-                        () -> tagRepository.save(new Tag(tagName)));
-                post.addTag(tag);
-            }
-        }
-        return modelMapper.map(post, PostDto.class);
+        return getPostDto(post, tags);
     }
 }
