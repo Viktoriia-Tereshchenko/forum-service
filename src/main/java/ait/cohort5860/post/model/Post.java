@@ -24,19 +24,30 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Setter
+    @Column(name = "title")
     private String title;
     @Setter
+    @Column(name = "content")
     private String content;
     @Setter
+    @Column(name = "author")
     private String author;
+    @Setter
+    @Column(name = "date_Created")
     private LocalDateTime dateCreated = LocalDateTime.now();
     @ManyToMany
+    @JoinTable(
+            name = "posts_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_name")
+    )
     private Set<Tag> tags = new HashSet<Tag>();
+    @Column(name = "likes")
     private int likes;
     // mappedBy - only in 1 place
     // with OneToMany (ManyToOne) - in parent entity
     // with ManyToMany - no matter which side
-    @OneToMany(mappedBy = "post") // link to child table
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL) // link to child table
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author) {

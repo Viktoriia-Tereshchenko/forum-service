@@ -1,9 +1,6 @@
 package ait.cohort5860.post.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
@@ -20,6 +17,7 @@ import java.util.Set;
 @Table(name = "tags")  // to rename the table in the database
 public class Tag {
     @Id // #2
+    @Column(name = "name")
     private String name;
     @ManyToMany(mappedBy = "tags")
     private Set<Post> posts = new HashSet<>();
