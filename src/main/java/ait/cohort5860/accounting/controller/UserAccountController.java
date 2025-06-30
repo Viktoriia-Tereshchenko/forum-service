@@ -40,13 +40,11 @@ public class UserAccountController {
 
     @PatchMapping("/user/{login}/role/{role}")
     public RoleDto addRole(@PathVariable String login, @PathVariable String role) {
-        //return userAccountService.addRole(login, role);
-        return userAccountService.changeRolesList(login, role, false);
+        return userAccountService.changeRolesList(login, role, true);
     }
 
     @DeleteMapping("/user/{login}/role/{role}")
     public RoleDto deleteRole(@PathVariable String login, @PathVariable String role) {
-        //return userAccountService.deleteRole(login, role);
         return userAccountService.changeRolesList(login, role, false);
     }
 
