@@ -80,7 +80,6 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(NotFoundException::new);
         Comment comment = new Comment(author, newCommentDto.getMessage());
         comment.setPost(post);
-        post.addComment(comment);
         commentRepository.save(comment);
         return modelMapper.map(post, PostDto.class);
     }

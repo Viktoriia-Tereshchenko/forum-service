@@ -36,8 +36,6 @@ public class Comment {
         this.message = message;
     }
 
-
-
     public void addLike() {
         likes++;
     }
