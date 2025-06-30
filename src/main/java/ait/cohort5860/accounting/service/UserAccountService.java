@@ -14,12 +14,6 @@ public interface UserAccountService {
 
     UserDto updateUser(String login, UserUpdateDto userUpdateDto);
 
-    //RoleDto addRole(String login, String role);
-
-    //RoleDto deleteRole(String login, String role);
-
-    //void changePassword();
-
     UserDto getUser(String login);
 
     RoleDto changeRolesList(String login, String role, boolean isAddRole);

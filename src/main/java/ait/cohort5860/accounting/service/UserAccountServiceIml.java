@@ -52,7 +52,7 @@ public class UserAccountServiceIml implements UserAccountService {
             userAccount.setFirstName(userAccount.getFirstName());
         }
         if (userAccount.getLastName() != null) {
-            userAccount.setFirstName(userAccount.getLastName());
+            userAccount.setLastName(userAccount.getLastName());
         }
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, UserDto.class);
