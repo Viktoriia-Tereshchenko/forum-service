@@ -8,19 +8,23 @@ import ait.cohort5860.accounting.dto.UserUpdateDto;
 import ait.cohort5860.accounting.dto.exeption.InvalidDataException;
 import ait.cohort5860.accounting.dto.exeption.UserExistsException;
 import ait.cohort5860.accounting.dto.exeption.UserNotFoundException;
+import ait.cohort5860.accounting.model.Role;
 import ait.cohort5860.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
-public class UserAccountServiceIml implements UserAccountService {
+public class UserAccountServiceIml implements UserAccountService, CommandLineRunner {
 
     private final UserAccountRepository userAccountRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDto register(RegistrationDto registrationDto) {
@@ -29,6 +33,11 @@ public class UserAccountServiceIml implements UserAccountService {
         }
         UserAccount userAccount = modelMapper.map(registrationDto, UserAccount.class);
         userAccount.addRole("USER");
+
+        // password hashing
+        String encodedPassword = passwordEncoder.encode(registrationDto.getPassword());
+        userAccount.setPassword(encodedPassword);
+
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, UserDto.class);
     }
@@ -85,5 +94,23 @@ public class UserAccountServiceIml implements UserAccountService {
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
         userAccount.setPassword(newPassword);
         userAccountRepository.save(userAccount);
+    }
+
+    // is done at the beginning of the application
+    @Override
+    public void run(String... args) throws Exception {
+        if (!userAccountRepository.existsById("admin")) {
+            UserAccount admin = UserAccount
+                    .builder()
+                    .login("admin")
+                    .password(passwordEncoder.encode("admin"))
+                    .firstName("Admin")
+                    .lastName("Admin")
+                    .role(Role.USER)
+                    .role(Role.MODERATOR)
+                    .role(Role.ADMINISTRATOR)
+                    .build();
+            userAccountRepository.save(admin);
+        }
     }
 }
