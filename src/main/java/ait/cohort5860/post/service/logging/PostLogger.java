@@ -5,9 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// аннотация видна в RUNTIME
+// the annotation is visible in RUNTIME
 @Retention(RetentionPolicy.RUNTIME)
-// можно ставить над методом
+// can be placed above the method
 @Target({ElementType.METHOD})
 public @interface PostLogger {
 }

@@ -5,6 +5,7 @@ import ait.cohort5860.accounting.dto.RoleDto;
 import ait.cohort5860.accounting.dto.UserDto;
 import ait.cohort5860.accounting.dto.UserUpdateDto;
 import ait.cohort5860.accounting.service.UserAccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,9 @@ public class UserAccountController {
 
     private final UserAccountService userAccountService;
 
+    // @Valid - if conditions in RegistrationDto for fields are not satisfied, 404 will be returned
     @PostMapping("/register")
-    public UserDto register(@RequestBody RegistrationDto registrationDto) {
+    public UserDto register(@RequestBody @Valid RegistrationDto registrationDto) {
         return userAccountService.register(registrationDto);
     }
 
@@ -34,7 +36,7 @@ public class UserAccountController {
     }
 
     @PatchMapping("/user/{login}")
-    public UserDto updateUser(@PathVariable String login, @RequestBody UserUpdateDto userUpdateDto) {
+    public UserDto updateUser(@PathVariable String login, @RequestBody @Valid UserUpdateDto userUpdateDto) {
         return userAccountService.updateUser(login, userUpdateDto);
     }
 
