@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')")) // only owner or ADMINISTRATOR
 
-                .requestMatchers("forum/post/{author}", "forum/post/{id}/comment/{author}")
+                .requestMatchers("/forum/post/{author}", "/forum/post/{id}/comment/{author}")
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
 
                 .anyRequest()
