@@ -38,11 +38,8 @@ public class SecurityConfiguration {
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name")) // only owner
                 .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')")) // only owner or ADMINISTRATOR
-                // teacher
                 .requestMatchers(HttpMethod.POST, "/forum/post/{author}")
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
-                //.requestMatchers("/forum/post/{author}", "/forum/post/{id}/comment/{author}")
-                //.access(new WebExpressionAuthorizationManager("#author == authentication.name"))
                 .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
                     .access(((authentication, context) ->
                         new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"), authentication.get().getName()))))

@@ -4,6 +4,7 @@ import ait.cohort5860.post.dto.NewCommentDto;
 import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
 import ait.cohort5860.post.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class PostController {
     // @ResponseStatus - annotation can stand above a class and a method
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/post/{user}")
-    public PostDto addPost(@PathVariable("user") String author, @RequestBody NewPostDto newPostDto) {
+    public PostDto addPost(@PathVariable("user") String author, @RequestBody @Valid NewPostDto newPostDto) {
         return postService.addPost(author, newPostDto);
     }
 
@@ -43,7 +44,7 @@ public class PostController {
     }
 
     @PatchMapping("/post/{id}/comment/{commenter}")
-    public PostDto addComment(@PathVariable Long id, @PathVariable("commenter") String author, @RequestBody NewCommentDto newCommentDto) {
+    public PostDto addComment(@PathVariable Long id, @PathVariable("commenter") String author, @RequestBody @Valid NewCommentDto newCommentDto) {
         return postService.addComment(id, author, newCommentDto);
     }
 
@@ -63,7 +64,7 @@ public class PostController {
     }
 
     @PatchMapping("/post/{id}")
-    public PostDto updatePost(@PathVariable Long id, @RequestBody NewPostDto newPostDto) {
+    public PostDto updatePost(@PathVariable Long id, @RequestBody @Valid NewPostDto newPostDto) {
         return postService.updatePost(id, newPostDto);
     }
 }

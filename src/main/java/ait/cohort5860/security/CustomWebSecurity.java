@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class CustomWebSecurity {
     private final PostRepository postRepository;
 
-    // переместить метод в PostRepository
+    // move the method to PostRepository
     public boolean checkPostAuthor(String postId, String username) {
         try {
             Long id = Long.parseLong(postId);
