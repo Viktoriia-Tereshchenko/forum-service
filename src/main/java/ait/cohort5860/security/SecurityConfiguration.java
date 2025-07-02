@@ -1,9 +1,11 @@
 package ait.cohort5860.security;
 
 import ait.cohort5860.accounting.model.Role;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,7 +18,9 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
+    private final CustomWebSecurity webSecurity;
 
     // since we made @Bean, the default authorization does not work
     @Bean
@@ -30,14 +34,24 @@ public class SecurityConfiguration {
                     .permitAll() // anyone can register
                 .requestMatchers(("/account/user/{login}/role/{role}"))
                     .hasRole(Role.ADMINISTRATOR.name()) // only ADMINISTRATOR
-                .requestMatchers(HttpMethod.PATCH, "/account/user/{login}")
+                .requestMatchers(HttpMethod.PATCH, "/account/user/{login}", "/forum/post/{id}/comment/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name")) // only owner
                 .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')")) // only owner or ADMINISTRATOR
-
-                .requestMatchers("/forum/post/{author}", "/forum/post/{id}/comment/{author}")
+                // teacher
+                .requestMatchers(HttpMethod.POST, "/forum/post/{author}")
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
-
+                //.requestMatchers("/forum/post/{author}", "/forum/post/{id}/comment/{author}")
+                //.access(new WebExpressionAuthorizationManager("#author == authentication.name"))
+                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
+                    .access(((authentication, context) ->
+                        new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"), authentication.get().getName()))))
+                .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}")
+                    .access((authentication, context) -> {
+                    boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("id"), authentication.get().getName());
+                    boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
+                    return new AuthorizationDecision(isAuthor || isModerator);
+                })
                 .anyRequest()
                     .authenticated()); // authentication is required
         //.permitAll()); // allowed to all
