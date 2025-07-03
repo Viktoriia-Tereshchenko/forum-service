@@ -13,3 +13,16 @@ spring:
   data:
     mongodb:
       uri: ${MONGO_URI}
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL}
+    password: ${GMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    from: vika.s.tereshchenko@gmail.com
