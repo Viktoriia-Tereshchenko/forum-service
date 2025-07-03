@@ -5,9 +5,9 @@ import ait.cohort5860.accounting.dto.RegistrationDto;
 import ait.cohort5860.accounting.dto.RoleDto;
 import ait.cohort5860.accounting.dto.UserDto;
 import ait.cohort5860.accounting.dto.UserUpdateDto;
-import ait.cohort5860.accounting.dto.exeption.InvalidDataException;
-import ait.cohort5860.accounting.dto.exeption.UserExistsException;
-import ait.cohort5860.accounting.dto.exeption.UserNotFoundException;
+import ait.cohort5860.accounting.dto.exception.InvalidDataException;
+import ait.cohort5860.accounting.dto.exception.UserExistsException;
+import ait.cohort5860.accounting.dto.exception.UserNotFoundException;
 import ait.cohort5860.accounting.model.Role;
 import ait.cohort5860.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor

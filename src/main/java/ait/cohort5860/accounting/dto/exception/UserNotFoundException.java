@@ -1,4 +1,4 @@
-package ait.cohort5860.accounting.dto.exeption;
+package ait.cohort5860.accounting.dto.exception;
 
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;

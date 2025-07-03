@@ -5,6 +5,7 @@ import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
 import ait.cohort5860.post.service.PostService;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +65,7 @@ public class PostController {
     }
 
     @PatchMapping("/post/{id}")
-    public PostDto updatePost(@PathVariable Long id, @RequestBody @Valid NewPostDto newPostDto) {
+    public PostDto updatePost(@PathVariable Long id, @RequestBody /*@Valid*/ NewPostDto newPostDto) {
         return postService.updatePost(id, newPostDto);
     }
 }
