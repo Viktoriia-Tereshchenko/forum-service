@@ -98,7 +98,6 @@ public class UserAccountServiceIml implements UserAccountService, CommandLineRun
     @Override
     public void sendEmail(EmailDto emailDto) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("vika.s.tereshchenko@gmail.com");
         message.setTo(emailDto.getTo());
         message.setSubject(emailDto.getSubject());
         message.setText(emailDto.getMessage());
