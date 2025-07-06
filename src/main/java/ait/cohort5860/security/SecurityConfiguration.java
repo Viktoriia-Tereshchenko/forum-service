@@ -47,6 +47,19 @@ public class SecurityConfiguration {
                 .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')")) // only owner or ADMINISTRATOR
                 .requestMatchers(HttpMethod.POST, "/forum/post/{author}")
                 .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
+
+                .requestMatchers(HttpMethod.POST, "/forum/post/{postId}/files/upload")
+                .access((authentication, context) -> {
+                    boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("postId"), authentication.get().getName());
+                    return new AuthorizationDecision(isAuthor);
+                })
+
+                .requestMatchers(HttpMethod.GET, "/post/{postId}/files/download/{fileId}")
+                .access((authentication, context) -> {
+                    boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("postId"), authentication.get().getName());
+                    return new AuthorizationDecision(isAuthor);
+                })
+
                 .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
                 .access(((authentication, context) ->
                         new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"), authentication.get().getName()))))

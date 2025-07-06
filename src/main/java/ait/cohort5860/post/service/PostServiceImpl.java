@@ -1,21 +1,27 @@
 package ait.cohort5860.post.service;
 
 import ait.cohort5860.post.dao.CommentRepository;
+import ait.cohort5860.post.dao.FileRepository;
 import ait.cohort5860.post.dao.PostRepository;
 import ait.cohort5860.post.dao.TagRepository;
+import ait.cohort5860.post.dto.FileResponseDto;
 import ait.cohort5860.post.dto.NewCommentDto;
 import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
 import ait.cohort5860.post.dto.exceptions.NotFoundException;
 import ait.cohort5860.post.model.Comment;
+import ait.cohort5860.post.model.FileEntity;
 import ait.cohort5860.post.model.Post;
 import ait.cohort5860.post.model.Tag;
 import ait.cohort5860.post.service.logging.PostLogger;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,6 +35,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
+    private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -128,5 +135,35 @@ public class PostServiceImpl implements PostService {
             post.setTitle(title);
         }
         return getPostDto(post, tags);
+    }
+
+    @Override
+    public FileResponseDto storeFile(Long postId, MultipartFile multipartFile) {
+        try {
+            Post post = postRepository.findById(postId).orElseThrow(NotFoundException::new);
+
+            FileEntity file = new FileEntity();
+            file.setFileName(multipartFile.getOriginalFilename());
+            file.setContentType(multipartFile.getContentType());
+            file.setData(multipartFile.getBytes());
+            file.setPost(post);
+
+            FileEntity saved = fileRepository.save(file);
+
+            FileResponseDto dto = new FileResponseDto();
+            dto.setFileName(saved.getFileName());
+            dto.setDownloadUrl("/forum/post/" + saved.getPost().getId() + "/files/download/" + saved.getId());
+
+            return dto;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save file", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FileEntity getFile(Long postId, Long fileId) {
+        Post post = postRepository.findById(postId).orElseThrow(NotFoundException::new);
+        return fileRepository.findByIdAndPostId(fileId, postId).orElseThrow(NotFoundException::new);
     }
 }

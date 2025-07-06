@@ -26,3 +26,7 @@ spring:
           starttls:
             enable: true
     from: vika.s.tereshchenko@gmail.com
+
+  servlet:
+    multipart:
+      enabled: true

@@ -1,8 +1,11 @@
 package ait.cohort5860.post.service;
 
+import ait.cohort5860.post.dto.FileResponseDto;
 import ait.cohort5860.post.dto.NewCommentDto;
 import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
+import ait.cohort5860.post.model.FileEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,5 +30,10 @@ public interface PostService {
     List<PostDto> findPostsByPeriod(LocalDate dateFrom, LocalDate dateTo);
 
     PostDto updatePost(Long id, NewPostDto newPostDto);
+
+    FileResponseDto storeFile(Long postId, MultipartFile multipartFile);
+
+    FileEntity getFile(Long postId, Long fileId);
 }
+
 
